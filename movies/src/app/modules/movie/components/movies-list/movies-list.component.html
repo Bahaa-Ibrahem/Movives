@@ -1,18 +1,50 @@
-<div class="row">
-    <div class="col-lg-3 col-md-6 col-sm-12 d-flex" *ngFor="let movie of movies;let i = index">
-        <div class="card">
-            <div class="card-body">
-                <h3 class="text-center clickable" [routerLink]="['/movie',movie.id]">{{movie.name}}</h3>
-                <a class="d-flex justify-content-center">
-                    <i #el (click)="onFavorite(movie.id, el)" class="fa-solid fa-star clickable"></i>
-                </a>
-                <div>
-                    <div class="text-center grow-2 pt-3 m-auto">
-                        <img [src]="movie.imagePath ? movie.imagePath : '/assets/image/NWC-001061-402.jpeg'"
-                            class="rounded-circle w100 img" alt="">
+<div class="row pt-4">
+    <div class="col-6">
+        <mat-form-field appearance="fill">
+            <mat-label>choose movies</mat-label>
+            <mat-select [(ngModel)]="selectedValue" name="favorite">
+                <mat-option value="all">All</mat-option>
+                <mat-option value="favorite">Favorite</mat-option>
+            </mat-select>
+        </mat-form-field>
+    </div>
+    <div class="col-6">
+        <input placeholder="search for movie..." [(ngModel)]="textSearch" type="text" class="form-control" (input)="onSearchChange()">
+    </div>
+    <ng-container *ngIf="selectedValue == 'all'">
+        <div class="col-lg-3 col-md-6 col-sm-12 d-flex" *ngFor="let movie of movies;let i = index">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="text-center clickable" [routerLink]="['/movie',movie.id]">{{movie.name}}</h3>
+                    <a class="d-flex justify-content-center">
+                        <i #el (click)="onFavorite(movie.id, el)" class="fa-solid fa-star clickable"></i>
+                    </a>
+                    <div>
+                        <div class="text-center grow-2 pt-3 m-auto">
+                            <img [src]="movie.imagePath ? movie.imagePath : '/assets/image/NWC-001061-402.jpeg'"
+                                class="rounded-circle w100 img" alt="">
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
+        <h3 *ngIf="movies.length == 0">No movies</h3>
+    </ng-container>
+
+    <ng-container *ngIf="selectedValue == 'favorite'">
+        <div class="col-lg-3 col-md-6 col-sm-12 d-flex" *ngFor="let movie of favoriteMovies;let i = index">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="text-center clickable" [routerLink]="['/movie',movie.id]">{{movie.name}}</h3>
+                    <div>
+                        <div class="text-center grow-2 pt-3 m-auto">
+                            <img [src]="movie.imagePath ? movie.imagePath : '/assets/image/NWC-001061-402.jpeg'"
+                                class="rounded-circle w100 img" alt="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h3 *ngIf="favoriteMovies.length == 0">No Favorite Movies</h3>
+    </ng-container>
 </div>
