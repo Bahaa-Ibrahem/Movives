@@ -16,23 +16,35 @@ export class MoviesListComponent implements OnInit, OnDestroy {
   @ViewChild(MatPaginator) paginator !: MatPaginator;
   obs: Observable<any> | undefined;
   movies: Movie[] = [];
-  dataSource: MatTableDataSource<Movie> = new MatTableDataSource<Movie>(this.movies);
   orignalMovies: Movie[] = [];
+  dataSource: MatTableDataSource<Movie> = new MatTableDataSource<Movie>(this.movies);
   favoriteMovies: Movie[] = [];
   orignalFavoriteMovies: Movie[] = [];
   selectedValue: string = 'all';
-  myControl = new FormControl();
-  filteredOptions: Movie[] = [];
   textSearch: string = '';
   constructor(private movieSrv: MovieService, private renderer: Renderer2, private changeDetectorRef: ChangeDetectorRef) { 
   }
 
   ngOnInit(): void {
-    this.getMovies();
-    this.dataSource = new MatTableDataSource<Movie>(this.movies);
-    this.changeDetectorRef.detectChanges();
-    this.dataSource.paginator = this.paginator;
-    this.obs = this.dataSource.connect();
+      this.getMovies();
+      this.dataSource = new MatTableDataSource<Movie>(this.movies);
+      this.changeDetectorRef.detectChanges();
+      this.dataSource.paginator = this.paginator;
+      this.obs = this.dataSource.connect();
+  }
+
+  onSelect() {
+    if(this.selectedValue == 'all') {
+      this.dataSource = new MatTableDataSource<Movie>(this.movies);
+      this.changeDetectorRef.detectChanges();
+      this.dataSource.paginator = this.paginator;
+      this.obs = this.dataSource.connect();
+    } else {
+      this.dataSource = new MatTableDataSource<Movie>(this.orignalFavoriteMovies.filter(movie => movie.name != null && movie.name.toLowerCase().includes(this.textSearch.toLowerCase())));
+      this.changeDetectorRef.detectChanges();
+      this.dataSource.paginator = this.paginator;
+      this.obs = this.dataSource.connect();
+    }
   }
 
   getMovies() {
@@ -47,17 +59,18 @@ export class MoviesListComponent implements OnInit, OnDestroy {
       this.dataSource.paginator = this.paginator;
       this.obs = this.dataSource.connect();
     }
-    else
-      this.favoriteMovies = this.orignalFavoriteMovies.filter(movie => movie.name != null && movie.name.toLowerCase().includes(this.textSearch.toLowerCase()));
+    else {
+      this.dataSource = new MatTableDataSource<Movie>(this.orignalFavoriteMovies.filter(movie => movie.name != null && movie.name.toLowerCase().includes(this.textSearch.toLowerCase())));
+      this.changeDetectorRef.detectChanges();
+      this.dataSource.paginator = this.paginator;
+      this.obs = this.dataSource.connect();
+    }
   }
 
-  onFavorite(id: number, el: HTMLElement) {
-    this.renderer.addClass(el, "active");
-    const movie = this.movieSrv.getMoviesById(id);
-    if(this.favoriteMovies.includes(movie)) 
-      return;
-    this.favoriteMovies.push(movie);
-    this.orignalFavoriteMovies.push(movie);
+  onFavorite(id: number) {
+    this.movieSrv.getMoviesById(id).isFavorite = true;
+    this.favoriteMovies = this.movies.filter(movie => movie.isFavorite == true);
+    this.orignalFavoriteMovies = this.favoriteMovies;
   }
 
   ngOnDestroy() {

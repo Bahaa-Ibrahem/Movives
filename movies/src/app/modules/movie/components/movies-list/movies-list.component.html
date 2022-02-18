@@ -2,7 +2,7 @@
     <div class="col-6">
         <mat-form-field appearance="fill">
             <mat-label>choose movies</mat-label>
-            <mat-select [(ngModel)]="selectedValue" name="favorite">
+            <mat-select (selectionChange)="onSelect()" [(ngModel)]="selectedValue" name="favorite">
                 <mat-option value="all">All</mat-option>
                 <mat-option value="favorite">Favorite</mat-option>
             </mat-select>
@@ -19,7 +19,7 @@
                 <div class="card-body">
                     <h1 class="text-center clickable" [routerLink]="['/movie',movie.id]">{{movie.name}}</h1>
                     <a class="d-flex justify-content-center">
-                        <i #el (click)="onFavorite(movie.id, el)" class="fa-solid fa-star clickable"></i>
+                        <i [ngStyle]="{color : movie.isFavorite == false ? '#ddd' : '#ffd700'}" (click)="onFavorite(movie.id)" class="fa-solid fa-star clickable"></i>
                     </a>
                     <div>
                         <div class="text-center grow-2 pt-3 m-auto">
@@ -33,10 +33,10 @@
         <h3 *ngIf="movies.length == 0">No movies</h3>
     </ng-container>
 
-    <mat-paginator *ngIf="selectedValue == 'all'" [pageSizeOptions]="[4, 10, 25, 100]"></mat-paginator>
+    <mat-paginator *ngIf="movies.length != 0 && selectedValue == 'all'" [pageSizeOptions]="[4, 10, 25, 100]"></mat-paginator>
 
     <ng-container *ngIf="selectedValue == 'favorite'">
-        <div class="col-lg-3 col-md-6 col-sm-12 d-flex" *ngFor="let movie of favoriteMovies;let i = index">
+        <div class="col-lg-3 col-md-6 col-sm-12 d-flex" *ngFor="let movie of obs | async;let i = index">
             <div class="card">
                 <div class="card-body">
                     <h1 class="text-center clickable" [routerLink]="['/movie',movie.id]">{{movie.name}}</h1>
@@ -51,4 +51,6 @@
         </div>
         <h3 *ngIf="favoriteMovies.length == 0">No Favorite Movies</h3>
     </ng-container>
+
+    <mat-paginator *ngIf="favoriteMovies.length != 0 && selectedValue == 'favorite'" [pageSizeOptions]="[4, 10, 25, 100]"></mat-paginator>
 </div>
