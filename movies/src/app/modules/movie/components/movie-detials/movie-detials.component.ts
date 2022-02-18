@@ -11,6 +11,9 @@ import { MovieService } from '../../services/movie.service';
 export class MovieDetialsComponent implements OnInit {
   id: number = 0;
   movie: any;
+  stars: number[] = [1, 2, 3, 4, 5];
+  selectedValue: number = 0;
+
   constructor(private activeRoter: ActivatedRoute, private movieSrv: MovieService) { 
    
   }
@@ -20,6 +23,10 @@ export class MovieDetialsComponent implements OnInit {
       this.id = param['id']; 
       this.movie = this.movieSrv.getMoviesById(this.id);
     })
+  }
+
+  countStar(star: number) {
+    this.selectedValue = star;
   }
 
 }
