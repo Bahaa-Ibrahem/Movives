@@ -1,6 +1,6 @@
 <div class="card">
     <div class="card-body">
-        <h3 class="text-center">{{movie.name}}</h3>
+        <h1 class="text-center">{{movie.name}}</h1>
 
         <div>
             <div class="text-center grow-2 pt-3 m-auto">
@@ -16,7 +16,7 @@
             <div class="col-sm-12">
                 <ul class="list-inline rating-list" 
                     *ngFor="let star of stars" style="display: inline-block" >
-                      <li (click)="countStar(star)"
+                      <li (click)="countStar(star)" class="clickable"
                           [ngClass]="{'selected': (star <= selectedValue)}">
                         <i class="fa fa-star"></i>
                       </li> 
