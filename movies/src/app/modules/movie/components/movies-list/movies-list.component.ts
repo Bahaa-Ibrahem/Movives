@@ -20,6 +20,8 @@ export class MoviesListComponent implements OnInit, OnDestroy {
   dataSource: MatTableDataSource<Movie> = new MatTableDataSource<Movie>(this.movies);
   favoriteMovies: Movie[] = [];
   orignalFavoriteMovies: Movie[] = [];
+  rateMovies: Movie[] = [];
+  orignalRateMovies: Movie[] = [];
   selectedValue: string = 'all';
   textSearch: string = '';
   constructor(private movieSrv: MovieService, private renderer: Renderer2, private changeDetectorRef: ChangeDetectorRef) { 
@@ -34,8 +36,16 @@ export class MoviesListComponent implements OnInit, OnDestroy {
   }
 
   onSelect() {
+    debugger
     if(this.selectedValue == 'all') {
       this.dataSource = new MatTableDataSource<Movie>(this.movies);
+      this.changeDetectorRef.detectChanges();
+      this.dataSource.paginator = this.paginator;
+      this.obs = this.dataSource.connect();
+    } else if(this.selectedValue == 'rate') {
+      this.rateMovies = this.orignalMovies.sort((a, b) => (a.rate) - (b.rate)).reverse();
+      this.orignalRateMovies = this.rateMovies;
+      this.dataSource = new MatTableDataSource<Movie>(this.rateMovies);
       this.changeDetectorRef.detectChanges();
       this.dataSource.paginator = this.paginator;
       this.obs = this.dataSource.connect();
@@ -55,6 +65,11 @@ export class MoviesListComponent implements OnInit, OnDestroy {
   onSearchChange() {
     if(this.selectedValue == 'all') {
       this.dataSource = new MatTableDataSource<Movie>(this.orignalMovies.filter(movie => movie.name != null && movie.name.toLowerCase().includes(this.textSearch.toLowerCase())));
+      this.changeDetectorRef.detectChanges();
+      this.dataSource.paginator = this.paginator;
+      this.obs = this.dataSource.connect();
+    } else if (this.selectedValue == 'rate') {
+      this.dataSource = new MatTableDataSource<Movie>(this.orignalRateMovies.filter(movie => movie.name != null && movie.name.toLowerCase().includes(this.textSearch.toLowerCase())));
       this.changeDetectorRef.detectChanges();
       this.dataSource.paginator = this.paginator;
       this.obs = this.dataSource.connect();

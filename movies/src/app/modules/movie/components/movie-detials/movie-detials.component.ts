@@ -27,6 +27,7 @@ export class MovieDetialsComponent implements OnInit {
 
   countStar(star: number) {
     this.selectedValue = star;
+    this.movieSrv.getMoviesById(this.id).rate = star;
   }
 
 }

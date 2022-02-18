@@ -5,6 +5,7 @@
             <mat-select (selectionChange)="onSelect()" [(ngModel)]="selectedValue" name="favorite">
                 <mat-option value="all">All</mat-option>
                 <mat-option value="favorite">Favorite</mat-option>
+                <mat-option value="rate">Most Rate</mat-option>
             </mat-select>
         </mat-form-field>
     </div>
@@ -53,4 +54,23 @@
     </ng-container>
 
     <mat-paginator *ngIf="favoriteMovies.length != 0 && selectedValue == 'favorite'" [pageSizeOptions]="[4, 10, 25, 100]"></mat-paginator>
+
+    <ng-container *ngIf="selectedValue == 'rate'">
+        <div class="col-lg-3 col-md-6 col-sm-12 d-flex" *ngFor="let movie of obs | async;let i = index">
+            <div class="card">
+                <div class="card-body">
+                    <h1 class="text-center clickable" [routerLink]="['/movie',movie.id]">{{movie.name}}</h1>
+                    <div>
+                        <div class="text-center grow-2 pt-3 m-auto">
+                            <img [src]="movie.imagePath ? movie.imagePath : '/assets/image/NWC-001061-402.jpeg'"
+                                class="rounded-circle w100 img" alt="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h3 *ngIf="rateMovies.length == 0">No Most Rate Movies</h3>
+    </ng-container>
+
+    <mat-paginator *ngIf="rateMovies.length != 0 && selectedValue == 'rate'" [pageSizeOptions]="[4, 10, 25, 100]"></mat-paginator>
 </div>
